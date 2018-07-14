@@ -12,7 +12,7 @@ include_once '../../modals/Post.php';
 $database = new Database();
 $db = $database->connect();
 
-// Instantiate blog post objecta
+// Instantiate blog post object
 $post = new Post($db);
 
 //get row posted data

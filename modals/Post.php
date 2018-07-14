@@ -109,9 +109,9 @@ class Post
         } else {
             return false;
         }
-
     }
     public  function login_control(){
+        session_start();
         $query = 'SELECT 
         *
          FROM uyeler as c Where c.kullanici_adi=?
@@ -124,10 +124,10 @@ class Post
         $stmt->bindParam(1, $this->kullanici_adi);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
         // set properties
         $this->kullanici_adi = $row['kullanici_adi'];
         $this->sifre = $row['sifre'];
+        $_SESSION["kullanici_adi"] = "yunus";
         if ($this->kullanici_adi == $kullanici_kontrol && $this->sifre == md5($sifre_kontrol)) {
             return true;
         } else {

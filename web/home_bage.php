@@ -24,7 +24,7 @@
         var dotpos=email.lastIndexOf(".");
         var data = $("#login-form").serialize();
         var request = new XMLHttpRequest();
-        var url = "http://localhost/php_rest_myblog/api/post/create.php";
+        var url = "http://localhost/clone-passwordcentry/api/post/create.php";
         var usernameWarning = document.getElementById('usernameResult');
         if ( kadi==null || kadi=="" || kadi.length < 3 )
         {
@@ -57,7 +57,7 @@
                             var res = obj.message;
                             if (res!=='0') {
                                 usernameWarning.innerHTML = "The username you typed has been used!";
-                                window.location.href="login_page.html";
+                                window.location.href="login_page.php";
                             }else{
                                alert("Bu kullanıcı adı kullanılmakta!")
                             }

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +18,7 @@
         var sifre1 = frm.passwordone.value;
         var data = $("#login-form").serialize();
         var request = new XMLHttpRequest();
-        var url = "http://localhost/php_rest_myblog/api/post/login_control.php";
+        var url = "http://localhost/clone-passwordcentry/api/post/login_control.php";
         if ( kadi==null || kadi=="" || kadi.length < 3 )
         {
             alert("Kullanıcı adı 3 karakterden az olamaz");
@@ -28,6 +29,7 @@
             alert("Şifreyi boş bırakmayın");
             return false;
         }
+
        else{
            request.open('POST', url, true);
            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -38,7 +40,8 @@
                        var obj = JSON.parse(text);
                        var res = obj.message;
                        if (res!=='0') {
-                           window.location.href="uyeler_page.html";
+                           jQuery('#name').load('../utils/session.php?kullanici_adi='+ kadi );
+                           window.location.href="uyeler_page.php";
                        }else{
                            alert("Kullanıcı adı veya şifre yanlış!")
                        }
@@ -60,7 +63,7 @@
                     <div class="card jumbotron" style="padding: 20px">
                         Kullanıcı Adı: <input type="text" name="name" id="name"><br>
                         Şifre: <input type="password" name="passwordone" id="password"><br>
-                        <input type="submit" name="uyeekle" class="btn btn-success btn-block" value="Kaydı Tamamla">
+                        <input type="submit" name="uyeekle" class="btn btn-success btn-block" value="Giriş Yap">
                     </div>
                 </div>
             </div>
