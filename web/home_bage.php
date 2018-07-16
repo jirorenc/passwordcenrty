@@ -14,7 +14,8 @@
     </script>
 </head>
 <script type="text/javascript">
-
+    jQuery('#password').load('../session.php?kullanici_adi='+"" );
+    jQuery('#name').load('../session.php?id='+"" );
     function submitForm(frm) {
         var kadi = frm.name.value;
         var sifre1 = frm.passwordone.value;
@@ -89,7 +90,9 @@
                     </div>
                 </div>
             </div>
-            <br>
+            <div style="text-align: center">
+                <label style="text-align: center"> <a href="login_page.php"> Giriş Sayfasına Git!</a></label>
+            </div>
         </form>
     </div>
 

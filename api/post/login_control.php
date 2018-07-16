@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 //Headers
 header('Access-Control-Allow-Origin: *');
 header('Content-type: application/json');
@@ -20,9 +20,11 @@ $post = new Post($db);
 $post->kullanici_adi=$_POST['name'];
 $post->sifre=$_POST['passwordone'];
 //Created post
-if($post->login_control()){
+list($id,$firma,$e_mail)=$post->login_control();
+
+if($id!=0){
         echo json_encode(
-            array('message'=>'1'));
+            array('message'=>'1','id'=>$id,'firma'=>$firma,'email'=>$e_mail));
 }
 else{
     echo json_encode(
