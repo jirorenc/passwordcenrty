@@ -4,13 +4,13 @@ header('Access-Control-Allow-Origin: *');
 header('Content-type: application/json');
 
 include_once '../../config/Database.php';
-include_once '../../modals/Post.php';
+include_once '../../modals/kategori_entegrasyon.php';
 //Instantiate DB & connect
 $database = new Database();
 $db = $database->connect();
 
 // Instantiate blog post object
-$post = new Post($db);
+$post = new kategori_entegrasyon($db);
 
 //Blog post query
 $restful=$post->read();
@@ -26,8 +26,8 @@ if($num>0){
 
         $post_item=array(
             'id' =>$id,
-            'firma_adi'=>$firma_adi,
-            'kullanici_adi'=> $kullanici_adi
+            'kategori_fk'=>$kategori_fk,
+            'entg_fk'=> $entg_fk
         );
         //Push to "data"
         array_push($posts_arr['data'],$post_item);

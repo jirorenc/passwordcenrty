@@ -10,9 +10,9 @@ session_start();
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="../js/category_select_entegrasyon.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-
     <script type="text/javascript">
         var user_name= '<?php echo $_SESSION["kullanici_adi"]; ?>';
         if(user_name=="" || user_name==null){
@@ -24,6 +24,10 @@ session_start();
             var kadi = frm.u_name.value;
             var ka_adi = frm.k_name.value;
             var sifre1 = frm.password.value;
+            var soap = frm.soap.checked;
+            var rest = frm.rest.checked;
+            var xml = frm.xml.checked;
+            var json = frm.json.checked;
             var id=0;
             var data = $("#login-form").serialize();
             var request = new XMLHttpRequest();
@@ -39,30 +43,38 @@ session_start();
                 alert("Kullanıcı adı 3 karakterden az olamaz");
                 return false;
             }
-
             if ( sifre1 == null || sifre1 === "" )
             {
                 alert("Şifreyi boş bırakmayın");
                 return false;
             }
+            if ( !soap && !rest && !xml && !json )
+            {
+                alert("En az bir tane api seçmelisiniz");
+                return false;
+            }
             else{
-                request.open('POST', url, true);
-                request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                request.onreadystatechange = function() {
-                    if (request.readyState === XMLHttpRequest.DONE) {
-                        if (request.status === 200) {
-                            var  text=request.responseText.toString();
-                           var obj = JSON.parse(text);
-                            var res = obj.message;
-                            console.log(text);
-                            if (res!='0') {
-                                alert("Başarı ile kategori oluşturuldu")
-                            }else{
-                                alert("Bu kategori adı mevcut!")
+                try{
+                    request.open('POST', url, true);
+                    request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    request.onreadystatechange = function() {
+                        if (request.readyState === XMLHttpRequest.DONE) {
+                            if (request.status === 200) {
+                                var  text=request.responseText.toString();
+                                console.log(text);
+                                var obj = JSON.parse(text);
+                                var res = obj.message;
+                                if (res!='0') {
+                                    alert("Başarı ile kategori oluşturuldu")
+                                }else{
+                                    alert("Bu kategori adı mevcut veya bir hata oluştu!")
+                                }
                             }
                         }
-                    }
-                };
+                    };
+                }  catch(err) {
+                    document.getElementById("demo").innerHTML = err.message;
+                }
                 request.send(data+"&id="+id);
             }
             return false;
@@ -124,10 +136,11 @@ session_start();
                                     Kategori_adi: <input type="text" name="k_name" id="k_name"><br>
                                     Kullanici_adi: <input type="text" name="u_name" id="u_name"><br>
                                     Şifre: <input type="password" name="password" id="password"><br>
-                                    <label class="radio-inline"><input type="checkbox" name="optradio">Soap</label>
-                                    <label class="radio-inline"><input type="checkbox" name="optradio">Rest</label>
-                                    <label class="radio-inline"><input type="checkbox" name="optradio">Xml-Rpc</label>
-                                    <label class="radio-inline"><input type="checkbox" name="optradio">Json-Rpc</label>
+                                    Api:
+                                    <label class="radio-inline"><input type="checkbox" name="soap" value="1" checked>Soap</label>
+                                    <label class="radio-inline"><input type="checkbox" name="rest" value="2">Rest</label>
+                                    <label class="radio-inline"><input type="checkbox" name="xml" value="3">Xml-Rpc</label>
+                                    <label class="radio-inline"><input type="checkbox" name="json" value="4">Json-Rpc</label>
                                     <input type="submit" name="k_ekle" class="btn btn-success btn-block"  id="k_ekle" onsubmit="return kategori_ekle(this)" value="Oluştur">
                                 </div>
 

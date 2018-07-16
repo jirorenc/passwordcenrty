@@ -64,7 +64,6 @@ class kategori{
         kategori_adi=:kategori_adi,
         sifre=:sifre,
         aktif=:aktif
-      
         ';
         //prepare statment
         $stmt = $this->conn->prepare($query);
@@ -95,24 +94,25 @@ class kategori{
     {
         $query = 'SELECT 
         *
-         FROM kategori as c Where c.kategori_adi=?
+         FROM kategori as c Where c.kategori_adi=? and c.uyeler_fk=?
          LIMIT 0,1';
         // prepare statment
         $stmt = $this->conn->prepare($query);
         //Bind ID
         $stmt->bindParam(1, $this->kategori_adi);
+        $stmt->bindParam(2, $this->uyeler_fk);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
         // set properties
-        $this->kategori_adi = $row['kategori_adi'];
-        if ($this->kategori_adi === null) {
-            return true;
+        $this->kullanici_adi = $row['kullanici_adi'];
+        $this->uyeler_fk = $row['uyeler_fk'];
+
+        if ($this->kullanici_adi === null && $this->uyeler_fk===null ) {
+            return array(true,0);
         } else {
-            return false;
+            return $row['id'];
         }
     }
-
     //update Post
     public function update()
     {

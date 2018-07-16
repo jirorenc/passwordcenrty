@@ -40,7 +40,6 @@
                if (request.readyState === XMLHttpRequest.DONE) {
                    if (request.status === 200) {
                        var text=request.responseText.toString();
-                       console.log(text);
                        var obj = JSON.parse(text);
                        var res = obj.message;
                        var id  = obj.id;
