@@ -14,11 +14,41 @@ session_start();
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <script type="text/javascript">
-        var user_name= '<?php echo $_SESSION["kullanici_adi"]; ?>';
-        if(user_name=="" || user_name==null){
-            window.location.href="login_page.php";
+        var user_name = '<?php echo $_SESSION["kullanici_adi"]; ?>';
+        if (user_name == "" || user_name == null) {
+            window.location.href = "login_page.php";
         }
     </script>
+    <!-- this script For user's put table -->
+    <script type="text/javascript">
+        var id = 0;
+        var kategori_list;
+        var tablo_control = "";
+        var text = "";
+        var i = x = "";
+        var request = new XMLHttpRequest();
+        var url = "http://localhost/clone-passwordcentry/api/kategori_post/kategori_read.php";
+        id = '<?php echo $_SESSION["id"]; ?>';
+        try {
+            request.open('POST', url, true);
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.onreadystatechange = function () {
+                if (request.readyState === XMLHttpRequest.DONE) {
+                    if (request.status === 200) {
+                        text = request.responseText.toString();
+                        tablo_control = JSON.parse(text);
+                        if (tablo_control.message != 0) {
+                            tablo_load(text);
+                        }
+                    }
+                }
+            };
+        } catch (err) {
+            document.getElementById("demo").innerHTML = err.message;
+        }
+        request.send("uyeler_fk=" + id);
+    </script>
+    <!-- this script For category create-->
     <script>
         function kategori_ekle(frm) {
             var kadi = frm.u_name.value;
@@ -28,81 +58,78 @@ session_start();
             var rest = frm.rest.checked;
             var xml = frm.xml.checked;
             var json = frm.json.checked;
-            var id=0;
+            var id = 0;
             var data = $("#login-form").serialize();
             var request = new XMLHttpRequest();
-            var url = "http://localhost/clone-passwordcentry/api/post/kategory_create.php" ;
+            var url = "http://localhost/clone-passwordcentry/api/kategori_post/kategory_create.php";
             id=  '<?php echo $_SESSION["id"]; ?>';
-            if ( ka_adi==null || ka_adi==="" || ka_adi.length < 3 )
-            {
+            if (ka_adi == null || ka_adi === "" || ka_adi.length < 3) {
                 alert("Kategori adı 3 karakterden az olamaz");
                 return false;
             }
-            if ( kadi==null || kadi==="" || kadi.length < 3 )
-            {
+            if (kadi == null || kadi === "" || kadi.length < 3) {
                 alert("Kullanıcı adı 3 karakterden az olamaz");
                 return false;
             }
-            if ( sifre1 == null || sifre1 === "" )
-            {
+            if (sifre1 == null || sifre1 === "") {
                 alert("Şifreyi boş bırakmayın");
                 return false;
             }
-            if ( !soap && !rest && !xml && !json )
-            {
+            if (!soap && !rest && !xml && !json) {
                 alert("En az bir tane api seçmelisiniz");
                 return false;
             }
-            else{
-                try{
+            else {
+                try {
                     request.open('POST', url, true);
                     request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    request.onreadystatechange = function() {
+                    request.onreadystatechange = function () {
                         if (request.readyState === XMLHttpRequest.DONE) {
                             if (request.status === 200) {
-                                var  text=request.responseText.toString();
-                                console.log(text);
+                                var text = request.responseText.toString();
                                 var obj = JSON.parse(text);
                                 var res = obj.message;
-                                if (res!='0') {
+                                if (res != '0') {
                                     alert("Başarı ile kategori oluşturuldu")
-                                }else{
+                                    location.reload();
+                                } else {
                                     alert("Bu kategori adı mevcut veya bir hata oluştu!")
                                 }
                             }
                         }
                     };
-                }  catch(err) {
+                } catch (err) {
                     document.getElementById("demo").innerHTML = err.message;
                 }
-                request.send(data+"&id="+id);
+                request.send(data + "&id=" + id);
             }
             return false;
         }
     </script>
 </head>
 <body>
+<!--this div  usrer's info for put in session -->
 <div class="container">
 
     <div class="card" style="background: yellowgreen; text-align: center">
         <div class="row padding">
             <div class="col-lg-3" style="padding: 6px;border-radius: 6px; ">
                 <?php
-                echo "Hoş gelidiniz sayın: " . $_SESSION["kullanici_adi"] ;
+                echo "Hoş gelidiniz sayın: " . $_SESSION["kullanici_adi"];
                 ?>
             </div>
             <div class="col-lg-3" style=" padding: 6px;border-radius: 6px; ">
                 <?php
-                echo "firma adı :" . $_SESSION["firma"] ;
+                echo "firma adı :" . $_SESSION["firma"];
                 ?>
             </div>
             <div class="col-lg-3" style=" padding: 6px;border-radius: 6px; ">
                 <?php
-                echo "e-posta: " . $_SESSION["email"] ;
+                echo "e-posta: " . $_SESSION["email"];
                 ?>
             </div>
             <div class="col-lg-3" style=" padding: 6px;border-radius: 6px; ">
-                <button type="button"  name="exit" id="exiti" onclick="exit()" class="btn btn-success">Çıkış yap</button>
+                <button type="button" name="exit" id="exiti" onclick="exit()" class="btn btn-success">Çıkış yap</button>
             </div>
 
         </div>
@@ -112,8 +139,8 @@ session_start();
 <div class="container padding" style="margin-top: 300px">
 
 </div>
-
-
+<p id="tab"></p>
+<!-- FOR MODAL CREATE CATEGORY-->
 <div class="container">
 
 
@@ -138,10 +165,14 @@ session_start();
                                     Şifre: <input type="password" name="password" id="password"><br>
                                     Api:
                                     <label class="radio-inline"><input type="checkbox" name="soap" value="1" checked>Soap</label>
-                                    <label class="radio-inline"><input type="checkbox" name="rest" value="2">Rest</label>
-                                    <label class="radio-inline"><input type="checkbox" name="xml" value="3">Xml-Rpc</label>
-                                    <label class="radio-inline"><input type="checkbox" name="json" value="4">Json-Rpc</label>
-                                    <input type="submit" name="k_ekle" class="btn btn-success btn-block"  id="k_ekle" onsubmit="return kategori_ekle(this)" value="Oluştur">
+                                    <label class="radio-inline"><input type="checkbox" name="rest"
+                                                                       value="2">Rest</label>
+                                    <label class="radio-inline"><input type="checkbox" name="xml"
+                                                                       value="3">Xml-Rpc</label>
+                                    <label class="radio-inline"><input type="checkbox" name="json"
+                                                                       value="4">Json-Rpc</label>
+                                    <input type="submit" name="k_ekle" class="btn btn-success btn-block" id="k_ekle"
+                                           onsubmit="return kategori_ekle(this)" value="Oluştur">
                                 </div>
 
                             </div>
@@ -153,64 +184,156 @@ session_start();
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
-
             </div>
         </div>
     </div>
 
 </div>
 
+<p id="tab"></p>
+<!-- FOR MODAL CREATE MEMBER-->
 <div class="container">
-    <h2>Kategoriler  <button type="button"
-                             data-toggle="modal" data-target="#myModal"
-                             class="btn pull-right btn-success">Kategori Ekle</button></h2>
 
-    <table class="table table-bordered " style="text-align: center">
+
+    <div class="modal fade" id="add_member_Modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Üye Oluştur</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body ">
+                    <form method="post" id="login-form" onsubmit="return uye_ekle(this)">
+                        <div class="row" style="position: relative">
+                            <div class="col-lg-12">
+                                <div class="card jumbotron" style="padding: 20px">
+                                    Kategori_adi: <input type="text" name="k_name" id="k_name"><br>
+                                    Kullanici_adi: <input type="text" name="u_name" id="u_name"><br>
+                                    Şifre: <input type="password" name="password" id="password"><br>
+                                    Api:
+                                    <label class="radio-inline"><input type="checkbox" name="soap" value="1" checked>Soap</label>
+                                    <label class="radio-inline"><input type="checkbox" name="rest"
+                                                                       value="2">Rest</label>
+                                    <label class="radio-inline"><input type="checkbox" name="xml"
+                                                                       value="3">Xml-Rpc</label>
+                                    <label class="radio-inline"><input type="checkbox" name="json"
+                                                                       value="4">Json-Rpc</label>
+                                    <input type="submit" name="k_ekle" class="btn btn-success btn-block" id="k_ekle"
+                                           onsubmit="return uye_ekle(this)" value="Oluştur">
+                                </div>
+
+                            </div>
+                        </div>
+                        <br>
+                    </form>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!--this div show to category-->
+<div class="container">
+    <h2>Kategori Tablosu</h2>
+    <button type="button"
+            data-toggle="modal" data-target="#myModal"
+            class="btn pull-right btn-success">Kategori Ekle
+    </button>
+    <p>Oluşturduğunuz kategorileri burdan kontrol edebilirsiniz:</p>
+
+
+    <table class="table table-striped">
         <thead>
         <tr>
             <th>Kategori Adı</th>
+            <th>Kullanıcı Adı</th>
             <th>Düzenle</th>
-            <th>Aktif</th>
-            <th>Pasif</th>
+            <th>Durum</th>
             <th>Üye Ekle</th>
         </tr>
         </thead>
-        <tbody>
-        <tr>
-            <td>Ankara</td>
-            <td>  <button type="button"  name="k_ekle" id="k_ekle" onclick="kategori_ekle()" class="btn  btn-primary">Düzenle</button></td>
-            <td> <button type="button"  name="k_ekle" id="k_ekle" onclick="kategori_ekle()" class="btn  btn-success">Aktif</button</td>
-            <td>  <button type="button"  name="k_ekle" id="k_ekle" onclick="kategori_ekle()" class="btn  btn-secondary">Pasif</button></td>
-            <td>  <button type="button"  name="k_ekle" id="k_ekle" onclick="kategori_ekle()" class="btn  btn-primary">Üye Ekle</button></td>
-        </tr>
-        <tr>
-            <td>ankararay</td>
-            <td>  <button type="button"  name="k_ekle" id="k_ekle" onclick="kategori_ekle()" class="btn btn-primary">Düzenle</button></td>
-            <td>  <button type="button"  name="k_ekle" id="k_ekle" onclick="kategori_ekle()" class="btn btn-secondary">Aktif</button></td>
-            <td>  <button type="button"  name="k_ekle" id="k_ekle" onclick="kategori_ekle()" class="btn btn-warning">Pasif</button></td>
-            <td> <button type="button"  name="k_ekle" id="k_ekle" onclick="kategori_ekle()" class="btn btn-primary">Üye Ekle</button></td>
-        </tr>
+        <tbody id="kard">
+        <script>
+            var tablo_extra="";
+            function tablo_load(tablo) {
+                console.log(tablo);
+                tablo_extra=tablo;
+                tablo_extra= JSON.parse(tablo_extra);
+                tablo_extra = tablo_extra.data;
+                var i=0;
+                var txt = "";
+                for (i = 0; i < tablo_extra.length; i++) {
+                    txt += "<tr><td >" + tablo_extra[i].kategori_adi + "</td>" +
+                        "<td>" + tablo_extra[i].kullanici_adi + "</td>" +
+                        "<td><input  class='btn btn-primary'  type='button' value='Düzenle'>" + "</td>" +
+                        "<td><input id='buttuns" +i+ "' class='btn tablo_button' onchange='alrt("+i+"," + tablo_extra[i].aktif + ")' onclick='durum_degistir("+i+","+ tablo_extra[i].id + "," + tablo_extra[i].aktif + ")'   type='button'>"
+                        + "</td>" +
+                        "<td><button id='uye_ekle"+i+"' class='btn btn-success' data-toggle='modal' data-target='#add_member_Modal'   type='button' ><i class='fa fa-plus-square-o'></i>" + "</td>" +
+                        "</tr>";
+                }
+                window.onload = function () {
+                    clik_button();
+                    document.getElementById("kard").innerHTML = txt;
+                };
+            }
+        </script>
         </tbody>
     </table>
 </div>
+
+
 <div class="container-fluid" style="margin-top: 1000px">
 
 </div>
-<div class="container">
-    <button type="button"  name="exit" id="exiti" onclick="exit()" class="btn pull-right btn-success">Çıkış yap</button>
-</div>
-
-
-
-
-
-
-
 <script type="text/javascript">
-    function exit(){
-        jQuery('#exiti').load('../session.php?kullanici_adi='+"" );
-        jQuery('#name').load('../session.php?id='+"" );
-        window.location.href="login_page.php";
+    function clik_button() {
+        $(document).ready(function () {
+            $('.tablo_button').change();
+        })
+    }
+
+    function alrt(i, durum) {
+        var inputval = document.getElementById("buttuns" + i);
+        if (durum == 1) {
+            inputval.style.backgroundColor = "#77e241";
+            inputval.value = "Aktif";
+        } else {
+            inputval.style.backgroundColor = "yellow";
+            inputval.value = "Pasif";
+        }
+    }
+
+    function durum_degistir(i,id,durum) {
+        if(durum==0){
+            durum=1;
+            var request= new change_state(id,durum);
+            alrt(i,durum);
+            location.reload();
+        }
+        else{
+            durum=0;
+
+            var request= new change_state(id,durum);
+            alrt(i,durum);
+            location.reload();
+        }
+    }
+
+
+</script>
+<script type="text/javascript">
+    function exit() {
+        jQuery('#exiti').load('../session.php?kullanici_adi=' + "");
+        jQuery('#name').load('../session.php?id=' + "");
+        window.location.href = "login_page.php";
     }
 </script>
 </body>

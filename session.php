@@ -13,4 +13,7 @@ if (isset($_GET['firma'])){
 if (isset($_GET['email'])){
     $_SESSION["email"]= $_GET['email'];
 }
+if (isset($_GET['tab'])){
+    $_SESSION["tab"]= $_GET['tab'];
+}
 ?>

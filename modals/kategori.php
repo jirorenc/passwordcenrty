@@ -24,12 +24,13 @@ class kategori{
     public function read()
     {
         // Create query
-        $query = 'SELECT * FROM kategori';
-
+        $query = 'SELECT * FROM kategori as k Where k.uyeler_fk=?';
         //Prepare statement
-
         $stmt = $this->conn->prepare($query);
+        //Bind ID
+        $stmt->bindParam(1, $this->uyeler_fk);
         $stmt->execute();
+
         return $stmt;
     }
 
@@ -57,11 +58,11 @@ class kategori{
     //Create Post
     public function create()
     {
-        $query = 'INSERT INTO  ' . $this->table . ' 
+        $query = 'INSERT INTO ' . $this->table . ' 
         SET 
         uyeler_fk=:uyeler_fk,
         kullanici_adi=:kullanici_adi,
-        kategori_adi=:kategori_adi,
+        kategori_adi=:kategori_adi, 
         sifre=:sifre,
         aktif=:aktif
         ';
@@ -116,22 +117,22 @@ class kategori{
     //update Post
     public function update()
     {
-        $query = 'UPDATE ' . $this->table . ' 
-        SET 
-        name = :name,
-        created_at = :created_at WHERE id=:id';
+        $query ='UPDATE kategori
+        SET
+        aktif=:aktif
+        WHERE id=:id ';
         //prepare statment
         $stmt = $this->conn->prepare($query);
-
         //clean data
-        $this->uyeler_fk = (strip_tags($this->uyeler_fk));
-        $this->created_at = (strip_tags($this->created_at));
         $this->id = (strip_tags($this->id));
+        $this->aktif = (strip_tags($this->aktif));
+
 
         //bind data
-        $stmt->bindParam(':name', $this->uyeler_fk);
-        $stmt->bindParam(':created_at', $this->created_at);
-        $stmt->bindParam(':id', $this->id);
+        $stmt->bindParam(':id',$this->id);
+        $stmt->bindParam(':aktif',$this->aktif);
+
+
 
         // execute query
         if ($stmt->execute()) {
