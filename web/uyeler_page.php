@@ -160,8 +160,8 @@ session_start();
                         <div class="row" style="position: relative">
                             <div class="col-lg-12">
                                 <div class="card jumbotron" style="padding: 20px">
-                                    Kategori_adi: <input type="text" name="k_name" id="k_name"><br>
-                                    Kullanici_adi: <input type="text" name="u_name" id="u_name"><br>
+                                    Kategori Adı: <input type="text" name="k_name" id="k_name"><br>
+                                    Kullanici Adı: <input type="text" name="u_name" id="u_name"><br>
                                     Şifre: <input type="password" name="password" id="password"><br>
                                     Api:
                                     <label class="radio-inline"><input type="checkbox" name="soap" value="1" checked>Soap</label>
@@ -197,7 +197,7 @@ session_start();
 
     <div class="modal fade" id="add_member_Modal">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
+            <div class="modal-content" >
 
                 <!-- Modal Header -->
                 <div class="modal-header">
@@ -207,23 +207,17 @@ session_start();
 
                 <!-- Modal body -->
                 <div class="modal-body ">
-                    <form method="post" id="login-form" onsubmit="return uye_ekle(this)">
+                    <form method="post" id="uye-form" onsubmit="return gonder(this)">
                         <div class="row" style="position: relative">
                             <div class="col-lg-12">
                                 <div class="card jumbotron" style="padding: 20px">
-                                    Kategori_adi: <input type="text" name="k_name" id="k_name"><br>
-                                    Kullanici_adi: <input type="text" name="u_name" id="u_name"><br>
-                                    Şifre: <input type="password" name="password" id="password"><br>
-                                    Api:
-                                    <label class="radio-inline"><input type="checkbox" name="soap" value="1" checked>Soap</label>
-                                    <label class="radio-inline"><input type="checkbox" name="rest"
-                                                                       value="2">Rest</label>
-                                    <label class="radio-inline"><input type="checkbox" name="xml"
-                                                                       value="3">Xml-Rpc</label>
-                                    <label class="radio-inline"><input type="checkbox" name="json"
-                                                                       value="4">Json-Rpc</label>
-                                    <input type="submit" name="k_ekle" class="btn btn-success btn-block" id="k_ekle"
-                                           onsubmit="return uye_ekle(this)" value="Oluştur">
+                                    Üye Adı: <input type="text" name="uye_name" id="uye_name"><br>
+                                    E-mail: <input type="email" name="uye_email" id="uye_email"><br>
+                                    Şifre: <input type="password" name="uye_password" id="uye_password"><br>
+                                    Başlangıç tarihi:<input  class="form-control" type="datetime-local" name="datetime_begin" value="2018-07-19T13:45:00" id="datetime_begin"><br>
+                                    Bitiş Tarihi:<input class="form-control" type="datetime-local" name="datetime_finish" value="2018-07-19T13:45:00" id="datetime_finish"><br>
+                                    <input type="submit" name="uye_ekle" class="btn btn-success btn-block" id="uye_ekle"
+                                           onsubmit="return  gonder(this)" value="Oluştur">
                                 </div>
 
                             </div>
@@ -261,35 +255,32 @@ session_start();
         </tr>
         </thead>
         <tbody id="kard">
-        <script>
-            var tablo_extra="";
-            function tablo_load(tablo) {
-                console.log(tablo);
-                tablo_extra=tablo;
-                tablo_extra= JSON.parse(tablo_extra);
-                tablo_extra = tablo_extra.data;
-                var i=0;
-                var txt = "";
-                for (i = 0; i < tablo_extra.length; i++) {
-                    txt += "<tr><td >" + tablo_extra[i].kategori_adi + "</td>" +
-                        "<td>" + tablo_extra[i].kullanici_adi + "</td>" +
-                        "<td><input  class='btn btn-primary'  type='button' value='Düzenle'>" + "</td>" +
-                        "<td><input id='buttuns" +i+ "' class='btn tablo_button' onchange='alrt("+i+"," + tablo_extra[i].aktif + ")' onclick='durum_degistir("+i+","+ tablo_extra[i].id + "," + tablo_extra[i].aktif + ")'   type='button'>"
-                        + "</td>" +
-                        "<td><button id='uye_ekle"+i+"' class='btn btn-success' data-toggle='modal' data-target='#add_member_Modal'   type='button' ><i class='fa fa-plus-square-o'></i>" + "</td>" +
-                        "</tr>";
-                }
-                window.onload = function () {
-                    clik_button();
-                    document.getElementById("kard").innerHTML = txt;
-                };
-            }
-        </script>
+
         </tbody>
     </table>
 </div>
+<script type="text/javascript">
+    var tablo_extra="";
+    function tablo_load(tablo) {
 
-
+        tablo_extra=tablo;
+        tablo_extra= JSON.parse(tablo_extra);
+        tablo_extra = tablo_extra.data;
+        var i=0;
+        var txt = "";
+        for (i = 0; i < tablo_extra.length; i++) {
+            txt += "<tr><td >" + tablo_extra[i].kategori_adi + "</td>" +
+                "<td>" + tablo_extra[i].kullanici_adi + "</td>" +
+                "<td><input  class='btn btn-primary'  type='button' value='Düzenle'>" + "</td>" +
+                "<td><input id='buttuns" +i+ "' class='btn tablo_button' onchange='alrt("+i+"," + tablo_extra[i].aktif + ")' onclick='durum_degistir("+i+","+ tablo_extra[i].id + "," + tablo_extra[i].aktif + ")'   type='button'>"
+                + "</td>" +
+                "<td><button id='uye_ekle"+i+"' class='btn btn-success add_button'  data-id='"+ tablo_extra[i].id + "' data-toggle='modal' data-target='#add_member_Modal'   type='button' ><i class='fa fa-plus-square-o'></i>" + "</td>" +
+                "</tr>";
+        }
+        clik_button();
+        document.getElementById("kard").innerHTML = txt;
+    }
+</script>
 <div class="container-fluid" style="margin-top: 1000px">
 
 </div>
@@ -299,18 +290,16 @@ session_start();
             $('.tablo_button').change();
         })
     }
-
     function alrt(i, durum) {
         var inputval = document.getElementById("buttuns" + i);
         if (durum == 1) {
             inputval.style.backgroundColor = "#77e241";
             inputval.value = "Aktif";
         } else {
-            inputval.style.backgroundColor = "yellow";
+            inputval.style.backgroundColor = "#FFD700";
             inputval.value = "Pasif";
         }
     }
-
     function durum_degistir(i,id,durum) {
         if(durum==0){
             durum=1;
@@ -320,13 +309,35 @@ session_start();
         }
         else{
             durum=0;
-
             var request= new change_state(id,durum);
             alrt(i,durum);
             location.reload();
         }
     }
+</script>
+<script>
+    var send_kategori_Id="";
+    $(document).on("click", ".add_button", function () {
+        send_kategori_Id= $(this).data('id');
+    });
+    function gonder(uye) {
+       var sonuc= new uye_ekle(uye,send_kategori_Id);
+        location.reload();
+    }
+</script>
+<script>
+    console.log("çalışıyor");
+</script>
+<script type="text/javascript">
 
+        var t=new Date();
+        var inputval = document.getElementById("datetime_begin");
+        var inputval2 = document.getElementById("datetime_finish");
+        var tarih=t.toLocaleDateString();
+        console.log(t);
+        var tarih=tarih.slice(6,10)+"-"+tarih.slice(3,5)+"-"+tarih.slice(0,2);
+        inputval.value=tarih+"T"+(t.toLocaleTimeString()).slice(0,5);
+        inputval2.value=tarih+"T"+(t.toLocaleTimeString()).slice(0,5);
 
 </script>
 <script type="text/javascript">

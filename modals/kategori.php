@@ -11,6 +11,10 @@ class kategori{
     public $kategori_adi;
     public $kullanici_adi;
     public $aktif;
+    public $aktif_baslangic;
+    public $aktif_bitis;
+    public $kategori_fk;
+    public $e_mail;
 
     // Consturctor with DB
     public function __construct($db)
@@ -30,35 +34,15 @@ class kategori{
         //Bind ID
         $stmt->bindParam(1, $this->uyeler_fk);
         $stmt->execute();
-
         return $stmt;
     }
 
-    //get single post
-    public function read_single()
-    {
-        // Create query
-        $query = 'SELECT 
-        *
-         FROM uyeler as c Where c.kullanici_adi=?
-         LIMIT 0,1';
-        // prepare statment
-        $stmt = $this->conn->prepare($query);
-        //Bind ID
-        $stmt->bindParam(1, $this->uyeler_fk);
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // set properties
-        $this->id = $row['id'];
-        $this->uyeler_fk = $row['kullanici_adi'];
-        $this->kategori_adi = $row['firma_adi'];
-    }
 
     //Create Post
     public function create()
     {
-        $query = 'INSERT INTO ' . $this->table . ' 
+        $query = 'INSERT INTO ' . $this->table . '
         SET 
         uyeler_fk=:uyeler_fk,
         kullanici_adi=:kullanici_adi,
@@ -88,7 +72,49 @@ class kategori{
         } else {
             return false;
         }
-        //printf("Error:%s.\n", $stmt->errorInfo());
+        printf("Error:%s.\n", $stmt->errorInfo());
+    }
+    //Create Post
+    public function uye_create()
+    {
+        $query = 'INSERT INTO alt_uyeler
+        SET 
+        kategori_fk=:kategori_fk,
+        kullanici_adi=:kullanici_adi,
+        sifre=:sifre, 
+        e_mail=:e_mail,
+        aktif=:aktif,
+        aktif_baslangic=:aktif_baslangic,
+        aktif_bitis=:aktif_bitis
+        ';
+        //prepare statment
+        $stmt = $this->conn->prepare($query);
+        //clean data
+        $this->kategori_fk = (strip_tags($this->kategori_fk));
+        $this->kullanici_adi = (strip_tags($this->kullanici_adi));
+        $this->sifre = (strip_tags($this->sifre));
+        $this->e_mail = (strip_tags($this->e_mail));
+        $this->aktif = (strip_tags($this->aktif));
+        $this->aktif_baslangic = (strip_tags($this->aktif_baslangic));
+        $this->aktif_bitis = (strip_tags($this->aktif_bitis));
+        $this->aktif = true;
+
+        //bind data
+        $stmt->bindParam(':kategori_fk', $this->kategori_fk);
+        $stmt->bindParam(':kullanici_adi', $this->kullanici_adi);
+        $stmt->bindParam(':sifre', $this->sifre);
+        $stmt->bindParam(':aktif', $this->aktif);
+        $stmt->bindParam(':e_mail', $this->e_mail);
+        $stmt->bindParam(':aktif_baslangic', $this->aktif_baslangic);
+        $stmt->bindParam(':aktif_bitis', $this->aktif_bitis);
+
+        // execute query
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+        printf("Error:%s.\n", $stmt->errorInfo());
     }
 
     public function control()
